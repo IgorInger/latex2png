@@ -1,0 +1,80 @@
+<project name="latex2png" basedir="." default="build">
+
+	<description>
+		Template for small JavaSE projects.
+	</description>
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="bin" />
+	<property name="lib.dir" value="lib" />
+
+	<property name="java.debug" value="off" />
+	<property name="java.source" value="1.6" />
+	<property name="java.target" value="1.6" />
+	<property name="java.encoding" value="UTF-8" />
+	
+	<property name="version" value="0.0.1"/>
+
+	<property name="jar.destfile" value="${ant.project.name}-${version}.jar" />
+	<property name="jar.src.destfile" value="${ant.project.name}-${version}-src.jar" />
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="pre-build">
+	</target>
+
+	<target name="build" depends="clean">
+		<antcall target="pre-build" />
+		<mkdir dir="${build.dir}" />
+		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="${java.debug}" source="${java.source}" target="${java.target}" encoding="${java.encoding}">
+			<classpath refid="classpath" />
+		</javac>
+		<antcall target="post-build" />
+	</target>
+
+	<target name="post-build">
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.java" />
+				<exclude name="**/log4j.properties" />
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="build-jar" depends="build">
+		<jar basedir="${build.dir}" destfile="${jar.destfile}">
+			<manifest>
+				<attribute name="Extension-Name" value="${ant.project.name}" />
+				<attribute name="Implementation-Vendor" value="" />
+				<attribute name="Implementation-Vendor-Id" value="" />
+				<attribute name="Implementation-Version" value="${version}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="build-src-jar">
+		<jar basedir="${src.dir}" destfile="${jar.src.destfile}">
+			<manifest>
+				<attribute name="Extension-Name" value="${ant.project.name}" />
+				<attribute name="Implementation-Vendor" value="" />
+				<attribute name="Implementation-Vendor-Id" value="" />
+				<attribute name="Implementation-Version" value="${version}" />
+			</manifest>
+		</jar>
+	</target>
+
+
+	<target name="run" depends="build-jar">
+		<java jar="${jar.destfile}" fork="true">
+			<classpath refid="classpath" />
+		</java>
+	</target>
+
+</project>
